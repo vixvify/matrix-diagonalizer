@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Eigen Matrix Diagonalizer
+
+เว็บแอปสำหรับคำนวณ eigenvalue, eigenvector และตรวจว่าเมทริกซ์สามารถแปลงเป็นเมทริกซ์ทแยงมุมได้หรือไม่ รองรับเมทริกซ์ขนาด 2x2 และ 3x3
+
+โปรเจกต์นี้ทำด้วย Next.js, React, TypeScript และ Tailwind CSS โดยแยก logic การคำนวณออกจากหน้า UI เพื่อให้อ่านและแก้ไขได้ง่าย
+
+## Features
+
+- เลือกขนาดเมทริกซ์ 2x2 หรือ 3x3
+- กรอกค่าจำนวนจริงได้ทั้งจำนวนเต็มและทศนิยม
+- แสดง characteristic equation
+- หา eigenvalues พร้อม algebraic multiplicity
+- หา eigenvectors และ geometric multiplicity
+- ตรวจเงื่อนไขการ diagonalize
+- แสดงเมทริกซ์ `P`, `D` และ `P^-1` เมื่อ diagonalize ได้
+- แจ้งเหตุผลเมื่อไม่สามารถ diagonalize ได้ในระบบจำนวนจริง
+
+## Tech Stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- ESLint
 
 ## Getting Started
 
-First, run the development server:
+ติดตั้ง dependencies:
+
+```bash
+npm install
+```
+
+รัน development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+เปิดเว็บที่:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Available Scripts
 
-## Learn More
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+รันโปรเจกต์ในโหมด development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+build โปรเจกต์สำหรับ production
 
-## Deploy on Vercel
+```bash
+npm run start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+รัน production build
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run lint
+```
+
+ตรวจโค้ดด้วย ESLint
+
+## Project Structure
+
+```text
+src/
+  app/
+    layout.tsx
+    page.tsx
+    globals.css
+  components/
+    eigen-matrix-calculator.tsx
+  domain/
+    matrix/
+      eigen-analysis.ts
+      matrix-operations.ts
+      types.ts
+  use-cases/
+    analyze-matrix.ts
+```
+
+## Main Files
+
+`src/components/eigen-matrix-calculator.tsx`
+
+หน้า calculator หลัก ใช้เก็บ state ของ input, แปลงค่าจากช่องกรอกเป็น matrix และส่งข้อมูลไปคำนวณ
+
+`src/use-cases/analyze-matrix.ts`
+
+เป็น use-case กลางของระบบ รับ matrix เข้ามาแล้วรวมผลลัพธ์ทั้งหมด ได้แก่ characteristic polynomial, eigenvalues และ diagonalization result
+
+`src/domain/matrix/eigen-analysis.ts`
+
+เก็บ logic หลักของ eigen analysis เช่น การสร้าง characteristic polynomial, หารากของสมการ, หา eigenvectors และสร้าง `P`, `D`, `P^-1`
+
+`src/domain/matrix/matrix-operations.ts`
+
+เก็บ operation พื้นฐานของ matrix เช่น determinant, inverse, RREF, null space และการจัดการ error จาก floating point
+
+`src/domain/matrix/types.ts`
+
+เก็บ type ของ matrix, eigenvalue และผลลัพธ์การ diagonalize
+
+## Calculation Flow
+
+1. ผู้ใช้กรอกค่า matrix ในหน้า calculator
+2. โปรแกรมแปลงค่าจาก string เป็น number matrix
+3. `analyzeMatrix()` ตรวจว่าขนาด matrix เป็น 2x2 หรือ 3x3
+4. สร้าง characteristic polynomial
+5. หารากของ polynomial เพื่อหา eigenvalues
+6. ใช้ `(A - lambda I)v = 0` เพื่อหา eigenvectors จาก null space
+7. ตรวจว่ามี eigenvectors อิสระเชิงเส้นครบตามมิติ matrix หรือไม่
+8. ถ้าครบ จะสร้าง `P`, `D`, `P^-1`
+9. ถ้าไม่ครบ จะแสดงเหตุผลว่า diagonalize ไม่ได้
+
+## Notes
+
+- โปรแกรมนี้โฟกัสการคำนวณบนจำนวนจริง
+- ถ้า characteristic polynomial มีรากจริงไม่ครบตามขนาด matrix ระบบจะสรุปว่าไม่สามารถ diagonalize ในระบบจำนวนจริงได้
+- ค่า floating point ที่ใกล้ศูนย์หรือใกล้จำนวนเต็มจะถูกปรับด้วย `cleanNumber()` เพื่อให้ผลลัพธ์อ่านง่ายขึ้น
