@@ -121,8 +121,11 @@ export function EigenMatrixCalculator() {
             </div>
 
             {!matrix ? (
-              <p className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                กรุณากรอกตัวเลขให้ครบทุกช่องก่อนคำนวณ
+              <p
+                role="alert"
+                className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
+              >
+                ไม่สามารถคำนวณได้ กรุณากรอกตัวเลขให้ครบทุกช่องก่อนคำนวณ
               </p>
             ) : null}
           </section>
@@ -144,6 +147,12 @@ function ResultPanel({ analysis }: { analysis: MatrixAnalysis | null }) {
     );
   }
 
+  const hasNoRealEigenAnswer =
+    analysis.eigenvalues.reduce(
+      (sum, item) => sum + item.algebraicMultiplicity,
+      0,
+    ) !== analysis.size;
+
   return (
     <section className="flex flex-col gap-4">
       <div className="rounded-md border border-zinc-200 bg-white p-5 shadow-sm">
@@ -161,6 +170,17 @@ function ResultPanel({ analysis }: { analysis: MatrixAnalysis | null }) {
             }
           />
         </div>
+        {!analysis.diagonalization.canDiagonalize ? (
+          <div
+            role="alert"
+            className="mt-4 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-800"
+          >
+            <p className="font-semibold">
+              ไม่สามารถหาคำตอบการแปลงเป็นเมทริกซ์ทแยงมุมได้
+            </p>
+            <p className="mt-1">{analysis.diagonalization.reason}</p>
+          </div>
+        ) : null}
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
@@ -169,6 +189,14 @@ function ResultPanel({ analysis }: { analysis: MatrixAnalysis | null }) {
             Eigen values และ Eigen vectors
           </h3>
           <div className="mt-4 space-y-3">
+            {hasNoRealEigenAnswer ? (
+              <p
+                role="alert"
+                className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-800"
+              >
+                ไม่สามารถหา eigen value / eigen vector ที่เป็นจำนวนจริงครบตามมิติของเมทริกซ์ได้
+              </p>
+            ) : null}
             {analysis.eigenvalues.map((item) => (
               <div
                 key={item.value}
