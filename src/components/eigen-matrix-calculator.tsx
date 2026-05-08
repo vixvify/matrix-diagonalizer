@@ -18,10 +18,15 @@ const examples: Record<2 | 3, Matrix> = {
 };
 
 export function EigenMatrixCalculator() {
+  // เก็บขนาดเมทริกซ์และค่าที่ผู้ใช้พิมพ์ในช่อง input
   const [size, setSize] = useState<2 | 3>(2);
   const [values, setValues] = useState<string[][]>(toInputValues(examples[2]));
 
+  // แปลงข้อความจาก input ให้เป็น Matrix จริง ถ้ายังกรอกไม่ครบจะได้ null
   const matrix = useMemo(() => parseMatrix(values), [values]);
+
+  // เมื่อ matrix ถูกต้องแล้วค่อยส่งไปคำนวณ eigen value, eigen vector และการ diagonalize
+  // useMemo ช่วยไม่ให้คำนวณซ้ำถ้าค่า matrix ยังไม่เปลี่ยน
   const analysis = useMemo(() => {
     if (!matrix) {
       return null;
@@ -31,11 +36,13 @@ export function EigenMatrixCalculator() {
   }, [matrix]);
 
   function changeSize(nextSize: 2 | 3) {
+    // เปลี่ยนขนาดเมทริกซ์แล้วโหลดค่าตัวอย่างของขนาดนั้นขึ้นมาใหม่
     setSize(nextSize);
     setValues(toInputValues(examples[nextSize]));
   }
 
   function updateCell(row: number, col: number, value: string) {
+    // อัปเดตเฉพาะช่องที่ผู้ใช้แก้ โดยคงค่าช่องอื่นไว้เหมือนเดิม
     setValues((current) =>
       current.map((items, rowIndex) =>
         rowIndex === row
@@ -138,6 +145,7 @@ export function EigenMatrixCalculator() {
 }
 
 function ResultPanel({ analysis }: { analysis: MatrixAnalysis | null }) {
+  // ถ้ายังไม่มี matrix ที่ครบถ้วน analysis จะเป็น null และยังไม่แสดงผลคำนวณ
   if (!analysis) {
     return (
       <section className="rounded-md border border-zinc-200 bg-white p-5 shadow-sm">
@@ -304,10 +312,12 @@ function MatrixView({ title, matrix }: { title: string; matrix: Matrix }) {
 }
 
 function toInputValues(matrix: Matrix): string[][] {
+  // input ของ HTML ต้องใช้ string จึงแปลงตัวเลขใน matrix เป็นข้อความก่อน
   return matrix.map((row) => row.map(String));
 }
 
 function parseMatrix(values: string[][]): Matrix | null {
+  // ตรวจค่าจาก input ถ้าช่องว่างหรือไม่ใช่ตัวเลขจะหยุดคำนวณด้วย null
   const parsed = values.map((row) =>
     row.map((value) => {
       const number = Number(value);
@@ -319,5 +329,6 @@ function parseMatrix(values: string[][]): Matrix | null {
     return null;
   }
 
+  // ถึงจุดนี้ผ่าน validation แล้ว ทุกช่องจึงเป็น number และ cast กลับเป็น Matrix ได้
   return parsed as Matrix;
 }
