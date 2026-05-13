@@ -4,24 +4,165 @@
 
 โปรเจกต์นี้ทำด้วย Next.js, React, TypeScript และ Tailwind CSS โดยแยก logic การคำนวณออกจากหน้า UI เพื่อให้อ่านและแก้ไขได้ง่าย
 
+---
+
+# Example Test Cases
+
+## Diagonalizable Cases
+
+### 2x2 — Distinct Eigenvalues
+
+```text
+[ 4  1 ]
+[ 2  3 ]
+```
+
+Expected:
+
+* Eigenvalues: 5, 2
+* Diagonalizable: Yes
+
+---
+
+### 2x2 — Repeated Eigenvalue but Still Diagonalizable
+
+```text
+[ 2  0 ]
+[ 0  2 ]
+```
+
+Expected:
+
+* Eigenvalue: 2 (AM = 2)
+* Eigenvectors independent = 2
+* Diagonalizable: Yes
+
+---
+
+### 3x3 — Already Diagonal Matrix
+
+```text
+[ 3  0  0 ]
+[ 0  3  0 ]
+[ 0  0  1 ]
+```
+
+Expected:
+
+* Eigenvalues: 3, 3, 1
+* λ = 3 → AM = 2, GM = 2
+* λ = 1 → AM = 1, GM = 1
+* Diagonalizable: Yes
+
+---
+
+### 3x3 — Upper Triangular Matrix
+
+```text
+[ 2  1  0 ]
+[ 0  3  0 ]
+[ 0  0  4 ]
+```
+
+Expected:
+
+* Eigenvalues: 2, 3, 4
+* Diagonalizable: Yes
+
+---
+
+# Non-Diagonalizable Cases
+
+### 2x2 — Not Enough Eigenvectors
+
+```text
+[ 1  1 ]
+[ 0  1 ]
+```
+
+Expected:
+
+* Eigenvalue: 1 (AM = 2)
+* GM = 1
+* Diagonalizable: No
+
+Reason:
+
+```text
+Not enough linearly independent eigenvectors
+```
+
+---
+
+### 2x2 — Jordan Form
+
+```text
+[ 5  1 ]
+[ 0  5 ]
+```
+
+Expected:
+
+* Eigenvalue: 5 (AM = 2)
+* GM = 1
+* Diagonalizable: No
+
+---
+
+### 3x3 — Defective Matrix
+
+```text
+[ 2  1  0 ]
+[ 0  2  1 ]
+[ 0  0  2 ]
+```
+
+Expected:
+
+* Eigenvalue: 2 (AM = 3)
+* GM = 1
+* Diagonalizable: No
+
+---
+
+### 3x3 — Complex Eigenvalues
+
+```text
+[ 0 -1 ]
+[ 1  0 ]
+```
+
+Expected:
+
+* Eigenvalues: i, -i
+* Cannot diagonalize over the real numbers
+
+Reason:
+
+```text
+Characteristic polynomial does not have enough real roots
+```
+
+---
+
 ## Features
 
-- เลือกขนาดเมทริกซ์ 2x2 หรือ 3x3
-- กรอกค่าจำนวนจริงได้ทั้งจำนวนเต็มและทศนิยม
-- แสดง characteristic equation
-- หา eigenvalues พร้อม algebraic multiplicity
-- หา eigenvectors และ geometric multiplicity
-- ตรวจเงื่อนไขการ diagonalize
-- แสดงเมทริกซ์ `P`, `D` และ `P^-1` เมื่อ diagonalize ได้
-- แจ้งเหตุผลเมื่อไม่สามารถ diagonalize ได้ในระบบจำนวนจริง
+* เลือกขนาดเมทริกซ์ 2x2 หรือ 3x3
+* กรอกค่าจำนวนจริงได้ทั้งจำนวนเต็มและทศนิยม
+* แสดง characteristic equation
+* หา eigenvalues พร้อม algebraic multiplicity
+* หา eigenvectors และ geometric multiplicity
+* ตรวจเงื่อนไขการ diagonalize
+* แสดงเมทริกซ์ `P`, `D` และ `P^-1` เมื่อ diagonalize ได้
+* แจ้งเหตุผลเมื่อไม่สามารถ diagonalize ได้ในระบบจำนวนจริง
 
 ## Tech Stack
 
-- Next.js 16
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- ESLint
+* Next.js 16
+* React 19
+* TypeScript
+* Tailwind CSS 4
+* ESLint
 
 ## Getting Started
 
@@ -124,6 +265,6 @@ src/
 
 ## Notes
 
-- โปรแกรมนี้โฟกัสการคำนวณบนจำนวนจริง
-- ถ้า characteristic polynomial มีรากจริงไม่ครบตามขนาด matrix ระบบจะสรุปว่าไม่สามารถ diagonalize ในระบบจำนวนจริงได้
-- ค่า floating point ที่ใกล้ศูนย์หรือใกล้จำนวนเต็มจะถูกปรับด้วย `cleanNumber()` เพื่อให้ผลลัพธ์อ่านง่ายขึ้น
+* โปรแกรมนี้โฟกัสการคำนวณบนจำนวนจริง
+* ถ้า characteristic polynomial มีรากจริงไม่ครบตามขนาด matrix ระบบจะสรุปว่าไม่สามารถ diagonalize ในระบบจำนวนจริงได้
+* ค่า floating point ที่ใกล้ศูนย์หรือใกล้จำนวนเต็มจะถูกปรับด้วย `cleanNumber()` เพื่อให้ผลลัพธ์อ่านง่ายขึ้น
